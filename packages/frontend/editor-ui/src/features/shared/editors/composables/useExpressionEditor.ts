@@ -151,11 +151,11 @@ export const useExpressionEditor = ({
 
 			rawSegments.push(newSegment);
 
-			// A collected segment owns its subtree: syntax nested inside it (the
-			// mixed JavaScript parser inside a Resolvable) must not become a
-			// segment of its own. Its offsets are document offsets, and re-basing
-			// them on the resolved output would point outside the output document.
-			return false;
+			// A Resolvable owns its subtree: the mixed JavaScript parser nests
+			// syntax inside it, and those nodes must not become segments of their
+			// own. Their offsets are document offsets, and re-basing them on the
+			// resolved output would point outside the output document.
+			if (newSegment.token === 'Resolvable') return false;
 		});
 
 		// Resolve all segments in parallel for better performance
