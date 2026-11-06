@@ -113,7 +113,9 @@ export const coloringStateField = StateField.define<DecorationSet>({
 
 					const decoration = resolvableStateToDecoration[txEffect.value.state ?? 'pending'];
 
-					if (txEffect.value.from === 0 && txEffect.value.to === 0) continue;
+					// An empty range marks nothing: (0, 0) is the "do nothing"
+					// sentinel, and any other empty range has no text to decorate.
+					if (txEffect.value.from === txEffect.value.to) continue;
 
 					colorings = colorings.update({
 						add: [decoration.range(txEffect.value.from, txEffect.value.to)],

@@ -150,6 +150,12 @@ export const useExpressionEditor = ({
 			if (isEqual(newSegment, rawSegments.at(-1))) return;
 
 			rawSegments.push(newSegment);
+
+			// A collected segment owns its subtree: syntax nested inside it (the
+			// mixed JavaScript parser inside a Resolvable) must not become a
+			// segment of its own. Its offsets are document offsets, and re-basing
+			// them on the resolved output would point outside the output document.
+			return false;
 		});
 
 		// Resolve all segments in parallel for better performance
