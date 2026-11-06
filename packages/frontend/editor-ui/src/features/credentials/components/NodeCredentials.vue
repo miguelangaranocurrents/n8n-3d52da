@@ -522,19 +522,24 @@ watch(
 
 		if (!isEmpty(selected.value)) return;
 
-		const autoSelected = getAutoSelectedCredential(
-			node.value,
-			props.overrideCredType,
-			props.credentials,
-		);
-		if (autoSelected) {
-			onCredentialSelected(
-				autoSelected.credentialType,
-				autoSelected.credential.id,
-				false, // showAuthOptions
-				false, // isUserAction
+		// Only pick a default on the first evaluation. A later parameter change
+		// (e.g. revealing an optional credential field) must not silently bind a
+		// credential the user never chose for this node.
+		if (isInitialEvaluation) {
+			const autoSelected = getAutoSelectedCredential(
+				node.value,
+				props.overrideCredType,
+				props.credentials,
 			);
-			return;
+			if (autoSelected) {
+				onCredentialSelected(
+					autoSelected.credentialType,
+					autoSelected.credential.id,
+					false, // showAuthOptions
+					false, // isUserAction
+				);
+				return;
+			}
 		}
 
 		// No credentials available to select — auto-enable AI Gateway for supported
